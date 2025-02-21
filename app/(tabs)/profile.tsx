@@ -1,9 +1,19 @@
-import { View } from 'react-native';
+import { ThemedButton } from '@/components/ThemedButton';
+import { StyleSheet, View } from 'react-native';
 
 export default function Profile() {
   return (
-    <View>
-
-    </View>
+	  <View style = {styles.container}>
+		<ThemedButton
+			title="Test"
+		/>  	
+	  </View>
   );
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: "center"
+	}
+})
