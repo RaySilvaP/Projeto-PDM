@@ -17,7 +17,8 @@ export const Colors = {
     primary: '#7140FD',
     title: '#111A41',
     success: '#5BCF95',
-    danger: '#FF4D4F'
+    danger: '#FF4D4F',
+    transparent: '#00000000'
   },
   dark: {
     text: '#ECEDEE',
@@ -29,6 +30,8 @@ export const Colors = {
     primary: '#7140FD',
     title: '#111A41',
     success: '#5BCF95',
-    danger: '#FF4D4F'
+    danger: '#FF4D4F',
+    transparent: '#00000000'
+
   },
 };
