@@ -1,12 +1,17 @@
 import { ThemedButton } from '@/components/ThemedButton';
+import { ThemedSlider } from '@/components/ThemedSlider';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
 export default function Profile() {
     return (
         <View style={styles.container}>
-            <ThemedButton type= "transparent" onPress={() => {Alert.alert("Test")}}> 
-                <Text>Test</Text>
+            <ThemedButton onPress={() => {Alert.alert("Test")}} shape = "circle"> 
+                <Text style={{color: 'white'}}>Test</Text>
             </ThemedButton>
+            <ThemedSlider
+                minimumValue= {0}
+                maximumValue= {1}
+            />
         </View>
     );
 }
@@ -14,6 +19,7 @@ export default function Profile() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center"
+        justifyContent: "center",
+        alignItems: "center"
     }
 })
