@@ -1,16 +1,15 @@
 import { ThemedButton } from '@/components/ThemedButton';
 import { ThemedSlider } from '@/components/ThemedSlider';
-import { ThemedTextInput } from '@/components/ThemedTextInput';
-import Slider from '@react-native-community/slider';
-import React from 'react';
+import { ThemedTextInput, ThemedTextInputHandle, ThemedTextInputProps } from '@/components/ThemedTextInput';
+import React, { useRef } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
 export default function Profile() {
     const [text, onChangeText] = React.useState('useless text');
-
+    const themedTextInput = useRef<ThemedTextInputHandle>(null);
     return (
         <View style={styles.container}>
-            <ThemedButton onPress={() => {Alert.alert("Test")}} shape = "circle"> 
+            <ThemedButton onPress={() => {themedTextInput.current?.setWrong(false)}} shape = "circle"> 
                 <Text style={{color: 'white'}}>Test</Text>
             </ThemedButton>
             <ThemedSlider
@@ -19,12 +18,16 @@ export default function Profile() {
                 style = {{width: '50%'}}
             />
             <ThemedTextInput
+                ref={themedTextInput}
                 onChangeText = {onChangeText}
                 value= {text}
-                placeholder= "text"/>
+                placeholder= "text"
+                errorMessage= "Test"
+            />
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
