@@ -14,6 +14,9 @@ const MAPPING = {
   'person.fill': 'person-outline',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'arrow.left': 'arrow-back',
+  'checkmark': 'done-all',
+  'xmark': 'clear'
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

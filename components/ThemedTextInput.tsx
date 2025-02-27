@@ -18,9 +18,11 @@ export const ThemedTextInput = forwardRef<ThemedTextInputHandle, ThemedTextInput
     const dangerColor = useThemeColor({ light: lightColor, dark: darkColor }, 'danger');
     const [isWrong, setWrongState] = React.useState(false);
     const [borderColor, setBorderColor] = React.useState(blurColor);
+
     useImperativeHandle(ref, () => ({
         setWrong: () => setWrongState(true),
     }));
+
     return (
         <View>
             <TextInput

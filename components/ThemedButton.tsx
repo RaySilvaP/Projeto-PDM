@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     default: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    padding: 5,
+    borderRadius: 20,
+    padding: 8,
     height: 40,
     borderWidth: 1,
     borderColor: 'transparent'
