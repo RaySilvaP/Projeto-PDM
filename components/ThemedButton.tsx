@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     padding: 8,
     height: 40,
     borderWidth: 1,
-    borderColor: 'transparent'
+    borderColor: 'transparent',
   },
   circle: {
       width: 40,
