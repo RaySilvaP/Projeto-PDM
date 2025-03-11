@@ -31,6 +31,9 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        //ADICIONEI PARA MINHAS TELAS
+        <Stack.Screen name="ScMyPets" options={{ headerShown: false }} />
+        <Stack.Screen name="ScPetForms" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

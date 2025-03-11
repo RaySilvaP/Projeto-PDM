@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { IconSymbol } from '@/components/ui/IconSymbol'; 
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -45,6 +45,20 @@ export default function TabLayout() {
         options={{
           title: "Perfil",
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+        }}
+      />
+      //MENU DO PET
+      <Tabs.Screen
+        name="ScMyPets/index"
+        options={{
+          title: 'PETS',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name={"paw" as any} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="ScPetForms/index"
+        options={{
+          href: null, 
         }}
       />
     </Tabs>
