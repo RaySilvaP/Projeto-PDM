@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol'; 
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -26,6 +26,7 @@ export default function TabLayout() {
           default: {},
         }),
       }}>
+      // TAB HOME 
       <Tabs.Screen
         name="index"
         options={{
@@ -33,6 +34,8 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
+
+      // TAB EXPLORE 
       <Tabs.Screen
         name="explore"
         options={{
@@ -40,14 +43,17 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
+
+      // TAB PERFIL 
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Perfil",
+          title: 'Perfil',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
-      //MENU DO PET
+
+      // TAB PETS 
       <Tabs.Screen
         name="ScMyPets/index"
         options={{
@@ -55,10 +61,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name={"paw" as any} color={color} />,
         }}
       />
+
+      // ScPetForms NÃO DEVE SER UMA TAB 
       <Tabs.Screen
         name="ScPetForms/index"
         options={{
-          href: null, 
+          href: null, // Remove esta tela da tab bar
         }}
       />
     </Tabs>

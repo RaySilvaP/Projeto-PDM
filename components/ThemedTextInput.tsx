@@ -52,7 +52,6 @@ export const ThemedTextInput = forwardRef<ThemedTextInputHandle, ThemedTextInput
         </View>
     )
 });
-
 const styles = StyleSheet.create({
     textInput: {
         borderWidth: 1,

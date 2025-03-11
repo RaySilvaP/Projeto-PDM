@@ -30,10 +30,10 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
+        // TABS PRINCIPAIS 
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        //ADICIONEI PARA MINHAS TELAS
-        <Stack.Screen name="ScMyPets" options={{ headerShown: false }} />
-        <Stack.Screen name="ScPetForms" options={{ headerShown: false }} />
+
+        // TELA DE ERRO 404 
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

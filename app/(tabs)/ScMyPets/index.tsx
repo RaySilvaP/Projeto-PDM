@@ -4,18 +4,18 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router'; // Adicionamos useFocusEffect
 import axios from 'axios';
 
 // ESTRUTURA DO PET
 interface Pet {
-  _id: string; 
+  _id: string;
   name: string;
   breed: string;
   age: number;
-  weight?: number; 
+  weight?: number;
   specie: string;
-  sex: string; 
+  sex: string;
   photos?: string[];
 }
 
@@ -25,7 +25,7 @@ function ScMyPets() {
   const [error, setError] = useState<string | null>(null);
   const primaryColor = useThemeColor({}, 'primary');
   const router = useRouter();
-  //TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
+  // TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxNjk3MDQ1LCJleHAiOjE3NDE3MzMwNDV9.ibdvqARB01YbfGXs_sFhBtUcjxWD4fqfo_PoPvT1Zu8'; // Token do usuário
 
   // CARREGA OS PETS DO BANCO USANDO A API
@@ -33,17 +33,16 @@ function ScMyPets() {
     setLoading(true);
     setError(null);
     try {
-      //MEU IP DA MINHA MÁQUI, SÓ TROCAR PELO DE VOCÊS
+      // MEU IP DA MINHA MÁQUINA, SÓ TROCAR PELO DE VOCÊS
       const response = await axios.get('http://192.168.2.4:3000/pets', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log('Resposta da API:', response.data); 
-      //MUDAR ESTADO - TESTANDO AINDA
-      setPets(response.data); 
-    } catch (err:any) {
+      console.log('Resposta da API:', response.data);
+      setPets(response.data);
+    } catch (err: any) {
       setError('Erro ao carregar os pets');
       console.error('Erro na requisição:', err.response ? err.response.data : err.message);
     } finally {
@@ -51,15 +50,17 @@ function ScMyPets() {
     }
   };
 
-  //MONTANDO O COMPONENTE
-  useEffect(() => {
-    fetchPets();
-  }, []);
+  // RECARREGA OS PETS SEMPRE QUE A TELA GANHA FOCO
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPets();
+    }, [])
+  );
 
   // LISTA OS PETS QUE FORAM CARREGADOS
   const renderPetItem = ({ item }: { item: Pet }) => {
     if (!item._id) {
-      return null; 
+      return null;
     }
 
     return (
@@ -68,7 +69,7 @@ function ScMyPets() {
           style={styles.petInfoContainer}
           onPress={() => router.back()}
         >
-          //MONTANDO AS FOTOS - TESTANDO AINDA
+          // MONTANDO AS FOTOS - TESTANDO AINDA 
           <Image
             source={{ uri: item.photos && item.photos.length > 0 ? item.photos[0] : 'https://via.placeholder.com/150' }}
             style={styles.petImage}
@@ -101,7 +102,9 @@ function ScMyPets() {
         >
           <Ionicons name="paw" size={24} color={primaryColor} />
         </TouchableOpacity>
-        <ThemedText type="title" style={[styles.title, { color: primaryColor, marginLeft: 10 }]}>Meus Pets</ThemedText>
+        <ThemedText type="title" style={[styles.title, { color: primaryColor, marginLeft: 10 }]}>
+          Meus Pets
+        </ThemedText>
         <TouchableOpacity onPress={() => router.push('/ScPetForms')}>
           <Ionicons name="add-circle" size={32} color={primaryColor} />
         </TouchableOpacity>
@@ -114,7 +117,7 @@ function ScMyPets() {
       ) : pets.length > 0 ? (
         <FlatList
           data={pets}
-          keyExtractor={(item) => item._id} 
+          keyExtractor={(item) => item._id}
           renderItem={renderPetItem}
           contentContainerStyle={styles.list}
         />
@@ -132,6 +135,7 @@ function ScMyPets() {
     </ThemedView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     paddingTop: '10%',
@@ -194,4 +198,5 @@ const styles = StyleSheet.create({
     width: '50%',
   },
 });
+
 export default ScMyPets;

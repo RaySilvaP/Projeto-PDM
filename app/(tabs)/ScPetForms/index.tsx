@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Text } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { AlertModal } from '@/components/AlertModal';
@@ -11,18 +11,18 @@ import axios from 'axios';
 
 // ESTRUTURA DO PET
 interface Pet {
-  _id?: string; 
+  _id?: string;
   name: string;
   breed: string;
   age: number;
-  weight?: number; 
-  specie: string; 
+  weight?: number;
+  specie: string;
   sex: string;
-  photos?: string[]; 
+  photos?: string[];
 }
 
-export function ScPetForms() {
-  const { id } = useLocalSearchParams<{ id: string }>(); 
+export default function ScPetForms() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -31,10 +31,11 @@ export function ScPetForms() {
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
   const [specie, setSpecie] = useState('');
-  const [sex, setSex] = useState('Male'); 
+  const [sex, setSex] = useState('Male');
   const [photos, setPhotos] = useState<string[]>([]);
   const alertRef = useRef<any>(null);
-  //TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
+
+  // TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxNjk3MDQ1LCJleHAiOjE3NDE3MzMwNDV9.ibdvqARB01YbfGXs_sFhBtUcjxWD4fqfo_PoPvT1Zu8'; // Token do usuário
 
   // PARA LIMPAR OS CAMPOS QUANDO FOR ADICIONAR
@@ -50,7 +51,7 @@ export function ScPetForms() {
     }
   }, [id]);
 
-  //PEGA OS DADOS DO PET SE FOI EDITAR
+  // PEGA OS DADOS DO PET SE FOI EDITAR
   useEffect(() => {
     if (id) {
       fetchPetDetails(id);
@@ -79,7 +80,7 @@ export function ScPetForms() {
     }
   };
 
-  // MODO TELA CHEIA 
+  // MODO TELA CHEIA
   useEffect(() => {
     navigation.setOptions({
       tabBarStyle: { display: 'none' },
@@ -97,14 +98,16 @@ export function ScPetForms() {
       alertRef.current?.setVisible('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
-    // DEIXANDO O MODO NUMERICO NA TELA
+
+    // DEIXANDO O MODO NUMÉRICO NA TELA
     const parsedAge = parseInt(age);
     const parsedWeight = weight ? parseFloat(weight) : undefined;
 
-    // TENTANDO COLOCAR IMAGENS EM ARRY
+    // TENTANDO COLOCAR IMAGENS EM ARRAY
     const validPhotos = Array.isArray(photos) ? photos : [];
 
-    const petData: Pet = {
+    // ESTRUTURA DO JSON CORRIGIDA
+    const petData = {
       name,
       breed,
       age: parsedAge,
@@ -114,35 +117,50 @@ export function ScPetForms() {
       photos: validPhotos,
     };
 
-    console.log('Dados enviados:', petData); 
-    //ATUALIZAÇÃO DO PET - TENDO PROBLEMAS***
+    console.log('Dados enviados:', petData);
+
     try {
       if (id) {
+        // ATUALIZAÇÃO DO PET - CORRIGIDO
         const response = await axios.put(`http://192.168.2.4:3000/pets/${id}`, petData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('Resposta da API (PUT):', response.data); 
+        console.log('Resposta da API (PUT):', response.data);
         alertRef.current?.setVisible('Pet atualizado com sucesso!');
       } else {
-   // CRIAR OS PETS  - TENDO PROBLEMAS***
-        const response = await axios.post('http://192.168.2.4:3000/pets', petData, {
+        // CRIAÇÃO DO PET
+        const response = await axios.post('http://192.168.2.4:3000/pets', { pets: [petData] }, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('Resposta da API (POST):', response.data); 
-        alertRef.current?.setVisible('Pet adicionado com sucesso!'); 
+        console.log('Resposta da API (POST):', response.data);
+        alertRef.current?.setVisible('Pet adicionado com sucesso!');
       }
+
+      // Resetar os estados após salvar
+      setName('');
+      setBreed('');
+      setAge('');
+      setWeight('');
+      setSpecie('');
+      setSex('Male');
+      setPhotos([]);
+
+      // Fechar o modal após 2 segundos
+      setTimeout(() => {
+        alertRef.current?.setVisible(false);
+      }, 2000);
 
       // VOLTAR PARA TELA DOS PETS
       setTimeout(() => {
-        router.push('/(tabs)/ScMyPets');
+        router.replace('/(tabs)/ScMyPets'); // Usar replace para substituir a tela na pilha de navegação
       }, 1000);
     } catch (err: any) {
-      console.error('Erro ao salvar o pet:', err.response ? err.response.data : err.message); // Verifique o erro detalhado
-      alertRef.current?.setVisible('Erro ao salvar o pet. Tente novamente.'); // Exibe o modal de erro
+      console.error('Erro ao salvar o pet:', err.response ? err.response.data : err.message);
+      alertRef.current?.setVisible('Erro ao salvar o pet. Tente novamente.');
     }
   };
 
@@ -153,9 +171,9 @@ export function ScPetForms() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-         //CABEÇALHO
+          // CABEÇALHO 
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/ScMyPets')}>
+            <TouchableOpacity onPress={() => router.replace('/(tabs)/ScMyPets')}>
               <Ionicons name="arrow-back" size={24} color={useThemeColor({}, 'primary')} />
             </TouchableOpacity>
             <ThemedText type="title" style={[styles.title, { color: useThemeColor({}, 'primary'), marginLeft: 10 }]}>
@@ -163,13 +181,13 @@ export function ScPetForms() {
             </ThemedText>
           </View>
 
-          //UPLOAD DAS FOTOS
+          // UPLOAD DAS FOTOS 
           <View style={styles.imageUploadContainer}>
             {photos.length > 0 && (
               <Image source={{ uri: photos[0] }} style={styles.image} />
             )}
 
-            //BOTÃO UPLOAD
+            // BOTÃO UPLOAD 
             <TouchableOpacity
               onPress={() => console.log('Upload de imagem')}
               style={[styles.addButton, { backgroundColor: useThemeColor({}, 'primary') }]}
@@ -178,7 +196,7 @@ export function ScPetForms() {
             </TouchableOpacity>
           </View>
 
-          //FORMULÁRIO DO PET
+          //FORMULÁRIO DO PET 
           <ThemedTextInput
             placeholder="Nome"
             value={name}
@@ -217,7 +235,7 @@ export function ScPetForms() {
             placeholderTextColor={useThemeColor({}, 'placeholder')}
           />
 
-          //BOTÕES DE SEXO
+          // BOTÕES DE SEXO 
           <ThemedText type="subtitle" style={{ color: useThemeColor({}, 'primary'), textAlign: 'center' }}>Sexo</ThemedText>
           <View style={styles.genderButtonsContainer}>
             <TouchableOpacity
@@ -234,14 +252,14 @@ export function ScPetForms() {
             </TouchableOpacity>
           </View>
 
-          //BOTÃO DE ADICIONAR
+          // BOTÃO DE ADICIONAR 
           <TouchableOpacity onPress={handleSavePet} style={[styles.addButton, { backgroundColor: useThemeColor({}, 'primary') }]}>
             <ThemedText lightColor="white">{id ? 'Salvar Alterações' : 'Adicionar Pet'}</ThemedText>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      //MODAL PARA CONFIRMAR
+      // MODAL PARA CONFIRMAR 
       <AlertModal
         ref={alertRef}
         text={id ? 'Pet atualizado com sucesso!' : 'Pet adicionado com sucesso!'}
@@ -325,4 +343,3 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 });
-export default ScPetForms;
