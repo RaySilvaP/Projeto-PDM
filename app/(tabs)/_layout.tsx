@@ -48,9 +48,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="petForm"
+        name="addVacina"
         options={{
-          title: "Editar pet",
+          title: "Adicionar Vacina",
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="editarPerfil"
+        options={{
+          title: "Editar Perfil",
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />

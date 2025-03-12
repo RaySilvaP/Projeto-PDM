@@ -1,60 +1,41 @@
-import { useThemeColor } from "@/hooks/useThemeColor";
-import React, { forwardRef, useImperativeHandle } from "react";
-import { StyleSheet, TextInput, TextInputProps, Text, View } from "react-native";
+import React from 'react';
+import { TextInput, StyleSheet } from 'react-native';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { ThemedInputProps } from './ThemedInputDrops';
 
-export type ThemedTextInputHandle = {
-    setWrong: () => void;
-}
+export const ThemedInput: React.FC<ThemedInputProps> = ({
+  value,
+  onChangeText,
+  placeholder,
+  multiline = false,
+  style = {},
+  placeholderTextColor,
+  keyboardType = 'default', 
+}) => {
+  const strokeColor = useThemeColor({}, 'stroke');
+  const backgroundColor = useThemeColor({}, 'background');
 
-export type ThemedTextInputProps = TextInputProps & {
-    lightColor?: string;
-    darkColor?: string;
-    errorMessage?: string;
+  return (
+    <TextInput
+      style={[styles.input, { borderColor: strokeColor, backgroundColor }, style]}
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      placeholderTextColor={placeholderTextColor}
+      multiline={multiline}  
+      numberOfLines={multiline ? 4 : 1} 
+      textAlignVertical={multiline ? 'top' : 'center'}
+      keyboardType={keyboardType} 
+    />
+  );
 };
 
-export const ThemedTextInput = forwardRef<ThemedTextInputHandle, ThemedTextInputProps>(({ style, lightColor, darkColor, errorMessage, ...rest }, ref) => {
-    const blurColor = useThemeColor({ light: lightColor, dark: darkColor }, 'stroke');
-    const focusColor = useThemeColor({ light: lightColor, dark: darkColor }, 'primary');
-    const dangerColor = useThemeColor({ light: lightColor, dark: darkColor }, 'danger');
-    const [isWrong, setWrongState] = React.useState(false);
-    const [borderColor, setBorderColor] = React.useState(blurColor);
-
-    useImperativeHandle(ref, () => ({
-        setWrong: () => setWrongState(true),
-    }));
-
-    return (
-        <View>
-            <TextInput
-                style={[
-                    { borderColor },
-                    styles.textInput,
-                    style
-                ]}
-                {...rest}
-                onFocus={() => {
-                    setBorderColor(focusColor);
-                    setWrongState(false);
-                }
-                }
-                onBlur={() => setBorderColor(blurColor)}
-            />
-            {
-                isWrong ?
-                    <Text style={[{ color: dangerColor }, styles.errorMessage]}>
-                        {errorMessage}
-                    </Text>
-                    : null}
-        </View>
-    )
-});
-
 const styles = StyleSheet.create({
-    textInput: {
-        borderWidth: 1,
-        borderRadius: 10
-    },
-    errorMessage: {
-        fontSize: 12,
-    }
+  input: {
+    width: '100%',
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    fontSize: 16,
+  },
 });
