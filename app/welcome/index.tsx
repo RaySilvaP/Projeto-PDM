@@ -27,7 +27,7 @@ export default function Welcome() {
                     <View style={[{ backgroundColor: primaryColor}, styles.paginationDot]}></View>
                     <View style={[{ backgroundColor: secondaryColor}, styles.paginationDot]}></View>
                 </View>
-                <View style={{ width: '100%', alignItems: 'flex-end' }}>
+                <View style={styles.buttons}>
                     <ThemedButton style={{ width: '30%' }} onPress={() => { router.push('/welcome/welcome2') }}>
                         <ThemedText lightColor='white'>Avançar</ThemedText>
                     </ThemedButton>
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 24,
+        paddingBottom: 48,
         paddingTop: 48,
         alignItems: 'center',
     },
@@ -62,5 +63,11 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: 10,
         height: 10
+    },
+    buttons: {
+        flex: 1,
+        width: '100%',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end'
     },
 });
