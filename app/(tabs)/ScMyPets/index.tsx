@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, FlatList, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, useFocusEffect } from 'expo-router'; // Adicionamos useFocusEffect
+import { useRouter, useFocusEffect } from 'expo-router'; 
 import axios from 'axios';
 
 // ESTRUTURA DO PET
@@ -25,8 +25,9 @@ function ScMyPets() {
   const [error, setError] = useState<string | null>(null);
   const primaryColor = useThemeColor({}, 'primary');
   const router = useRouter();
+  
   // TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxNjk3MDQ1LCJleHAiOjE3NDE3MzMwNDV9.ibdvqARB01YbfGXs_sFhBtUcjxWD4fqfo_PoPvT1Zu8'; // Token do usuário
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxODczNzAzLCJleHAiOjE3NDE5MDk3MDN9.tGrNRaX06GPJf4hB6HUdMIonzIFNx1fj2m3P8XcETDU'; // Token do usuário
 
   // CARREGA OS PETS DO BANCO USANDO A API
   const fetchPets = async () => {
@@ -62,18 +63,23 @@ function ScMyPets() {
     if (!item._id) {
       return null;
     }
-
+      console.log(item)
     return (
       <View style={styles.petItem}>
         <TouchableOpacity
           style={styles.petInfoContainer}
           onPress={() => router.back()}
         >
-          // MONTANDO AS FOTOS - TESTANDO AINDA 
+          {/* MONTANDO AS FOTOS */}
           <Image
-            source={{ uri: item.photos && item.photos.length > 0 ? item.photos[0] : 'https://via.placeholder.com/150' }}
+            source={{
+              uri: item.photos && item.photos.length > 0
+                ? `http://192.168.2.4:3000/uploads/${item.photos[item.photos.length-1]}?${Date.now()}` // Adiciona timestamp para evitar cache
+                : 'https://www.example.com/placeholder.jpg', // Imagem de fallback
+            }}
             style={styles.petImage}
           />
+
           <View style={styles.petInfo}>
             <ThemedText type="subtitle" style={styles.petName}>{item.name}</ThemedText>
             <ThemedText>Raça: {item.breed}</ThemedText>
@@ -111,7 +117,7 @@ function ScMyPets() {
       </View>
 
       {loading ? (
-        <ThemedText>Carregando...</ThemedText>
+        <ActivityIndicator size="large" color={primaryColor} />
       ) : error ? (
         <ThemedText style={{ color: 'red' }}>{error}</ThemedText>
       ) : pets.length > 0 ? (

@@ -9,13 +9,25 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Permitir acesso à galeria para enviar fotos.",
+        "NSCameraUsageDescription": "Permitir acesso à câmera para tirar fotos.",
+        "NSMicrophoneUsageDescription": "Este app necessita de acesso ao microfone para gravar áudio (caso necessário)."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",  
+        "ACCESS_COARSE_LOCATION" 
+      ]
     },
     "web": {
       "bundler": "metro",
