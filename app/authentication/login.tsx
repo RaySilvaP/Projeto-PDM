@@ -5,13 +5,34 @@ import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useEffect } from 'react';
+
+const schema = yup.object({
+    email: yup.string().email('E-mail inválido').required('O e-mail é obrigatório'),
+    password: yup.string().min(6, 'A senha deve ter pelo menos 6 caracteres').required('A senha é obrigatória'),
+}).required();
 
 export default function Login() {
     const primaryColor = useThemeColor({}, 'primary');
     const secondTextColor = useThemeColor({}, 'textSecondary');
     const router = useRouter();
+    const { register, setValue, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(schema),
+    });
+
+    useEffect(() => {
+        register('email')
+        register('password')
+    });
+
+    const onSubmit = (data: any) => {
+        Alert.alert("Login realizado!", JSON.stringify(data, null, 2));
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -24,13 +45,25 @@ export default function Login() {
                     Entre para continuar conectando com a comunidade de pets.
                 </ThemedText>
                 <View style={styles.inputs}>
-                    <ThemedTextInput placeholder='Digite seu endereço de e-mail' style={{ marginBottom: 16 }} />
-                    <ThemedTextInput placeholder='Digite sua senha' />
+                    <ThemedTextInput
+                        label='E-mail:'
+                        placeholder='Digite seu endereço de e-mail'
+                        onChangeText={(text) => setValue('email', text)}
+                        errorMessage={errors.email?.message}
+                        ref={ref => ref?.showErrorMessage(errors.email ? true : false)}
+                        style={{ marginBottom: 16 }} />
+                    <ThemedTextInput
+                        label='Senha:'
+                        placeholder='Digite sua senha'
+                        secureTextEntry
+                        onChangeText={(text) => setValue('password', text)}
+                        errorMessage={errors.password?.message}
+                        ref={ref => ref?.showErrorMessage(errors.password ? true : false)}/>
                 </View>
-                <ThemedButton style={styles.button} onPress={() => { router.push('/welcome/welcome2') }}>
+                <ThemedButton style={styles.button} onPress={handleSubmit(onSubmit)}>
                     <ThemedText lightColor='white'>Entrar</ThemedText>
                 </ThemedButton>
-                    <View style={styles.signup}>
+                <View style={styles.signup}>
                     <ThemedText>Ainda não tem conta?</ThemedText>
                     <ThemedText style={{ color: primaryColor, marginLeft: 8 }} onPress={() => { router.replace('/authentication/signup') }}>
                         Cadastre-se agora!
@@ -62,7 +95,7 @@ const styles = StyleSheet.create({
         marginTop: 24,
         marginBottom: 16,
     },
-    signup: { 
+    signup: {
         flexDirection: 'row',
         flex: 1,
         justifyContent: 'center',
