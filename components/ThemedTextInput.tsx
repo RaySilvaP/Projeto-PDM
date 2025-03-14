@@ -1,6 +1,6 @@
-import { useThemeColor } from "@/hooks/useThemeColor";
-import React, { forwardRef, useImperativeHandle } from "react";
-import { StyleSheet, TextInput, TextInputProps, Text, View } from "react-native";
+import React, { forwardRef, useImperativeHandle } from 'react';
+import { TextInput, StyleSheet, TextInputProps, View, Text } from 'react-native';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextInputHandle = {
     showErrorMessage: (show: boolean) => void;
@@ -13,8 +13,8 @@ export type ThemedTextInputProps = TextInputProps & {
     label?: string;
 };
 
-export const ThemedTextInput = forwardRef<ThemedTextInputHandle, ThemedTextInputProps>(({ style, lightColor, darkColor, errorMessage, label, placeholderTextColor,
-...rest }, ref) => {
+export const ThemedTextInput = forwardRef<ThemedTextInputHandle, ThemedTextInputProps>(({ style, lightColor, darkColor, errorMessage, label, multiline, placeholderTextColor,
+    ...rest }, ref) => {
     const blurColor = useThemeColor({ light: lightColor, dark: darkColor }, 'stroke');
     const focusColor = useThemeColor({ light: lightColor, dark: darkColor }, 'primary');
     const dangerColor = useThemeColor({ light: lightColor, dark: darkColor }, 'danger');
@@ -29,21 +29,21 @@ export const ThemedTextInput = forwardRef<ThemedTextInputHandle, ThemedTextInput
 
     return (
         <View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            {
-                label ?
-                    <Text style={[{ color: blurColor }, styles.label]}>
-                        {label}
-                    </Text>
-                    : null
-            }
-            {
-                isWrong ?
-                    <Text style={[{ color: dangerColor }, styles.errorMessage]}>
-                {errorMessage}
-                </Text>
-                    : null
-            }
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                {
+                    label ?
+                        <Text style={[{ color: blurColor }, styles.label]}>
+                            {label}
+                        </Text>
+                        : null
+                }
+                {
+                    isWrong ?
+                        <Text style={[{ color: dangerColor }, styles.errorMessage]}>
+                            {errorMessage}
+                        </Text>
+                        : null
+                }
             </View>
             <TextInput
                 style={[
@@ -51,6 +51,8 @@ export const ThemedTextInput = forwardRef<ThemedTextInputHandle, ThemedTextInput
                     { color: textColor, borderColor, alignSelf: 'stretch', backgroundColor },
                     style,
                 ]}
+                numberOfLines={multiline ? 4 : 1}
+                textAlignVertical={multiline ? 'top' : 'center'}
                 {...rest}
                 placeholderTextColor={placeholderTextColor}
                 onFocus={() => {
