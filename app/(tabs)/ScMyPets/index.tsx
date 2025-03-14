@@ -27,7 +27,7 @@ function ScMyPets() {
   const router = useRouter();
   
   // TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxODczNzAzLCJleHAiOjE3NDE5MDk3MDN9.tGrNRaX06GPJf4hB6HUdMIonzIFNx1fj2m3P8XcETDU'; // Token do usuário
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxOTA5OTk5LCJleHAiOjE3NDE5NDU5OTl9.YRrBErYfWZnw_jJXPxvE0mUFBSNbctfJjhI-AmSUzHk'; // Token do usuário
 
   // CARREGA OS PETS DO BANCO USANDO A API
   const fetchPets = async () => {
