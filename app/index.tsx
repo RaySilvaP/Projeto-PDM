@@ -13,7 +13,7 @@ export default function Index() {
         isFirstLaunch ?
             <Redirect href={'/welcome'} />
             : tokenState ?
-                <Redirect href={'/(tabs)'} />
+                <Redirect href={'/(tabs)/Index'} />
                 : <Redirect href={'/authentication/login'} />
     );
 }

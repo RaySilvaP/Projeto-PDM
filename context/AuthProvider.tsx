@@ -36,7 +36,6 @@ export function AuthProviderContext({ children }: IProps) {
         const data = {
             email, password
         }
-        console.log(JSON.stringify(data));
         try {
             const response = await api.post('/login', data);
 
@@ -51,6 +50,7 @@ export function AuthProviderContext({ children }: IProps) {
 
             return { success: true, message: "Login realizado com sucesso!" };
         } catch (error: any) {
+            console.log(error);
             const errorMessage = error.response?.data?.message || "Erro ao realizar login. Verifique suas credenciais.";
             return { success: false, message: errorMessage };
         }
@@ -61,6 +61,7 @@ export function AuthProviderContext({ children }: IProps) {
             await api.post('/user', data);
             return { success: true, message: "Cadastro realizado com sucesso!" };
         } catch (error: any) {
+            console.log(error);
             const errorMessage = error.response?.data?.message || "Erro ao realizar cadastro.";
             return { success: false, message: errorMessage };
         }

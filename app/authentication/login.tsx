@@ -5,7 +5,7 @@ import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,7 +13,6 @@ import * as yup from 'yup';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { AlertModal, AlertModalHandle } from '@/components/AlertModal';
-import { modifyConfigAsync } from 'expo/config';
 
 const schema = yup.object({
     email: yup.string().email('E-mail inválido').required('O e-mail é obrigatório'),
@@ -22,7 +21,7 @@ const schema = yup.object({
 
 export default function Login() {
     const primaryColor = useThemeColor({}, 'primary');
-    const secondTextColor = useThemeColor({}, 'textSecondary');
+    const secondTextColor = useThemeColor({}, 'placeholder');
     const router = useRouter();
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
@@ -40,7 +39,7 @@ export default function Login() {
         const response = await login(data.email, data.password);
 
         if (response.success) {
-            router.replace('/(tabs)');
+            router.replace('/(tabs)/Index');
         } else {
             setModalText(response.message);
             modalRef.current?.setVisible();
