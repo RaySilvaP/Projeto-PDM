@@ -8,6 +8,8 @@ import InfoSection from '@/components/InfoSection';
 import DescriptionCard from '@/components/DescriptionCard';
 import VaccinationSection from '@/components/VaccinationSection';
 import { ThemedText } from '@/components/ThemedText';
+import { api } from '@/api';
+import { useAuth } from '@/hooks/useAuth';
 
 // ESTRUTURA DO PET
 interface Pet {
@@ -29,18 +31,16 @@ const PetDetails: React.FC = () => {
   const [petData, setPetData] = useState<Pet | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // TOKEN FIXO (TEMPORÁRIO)
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxOTI0Mzk0LCJleHAiOjE3NDE5NjAzOTR9.T9uT_vxxxO-cfFTQS-qAjO_amaJawEuBjsCKybxXhYY';
+  const {tokenState} = useAuth();
 
   // FUNÇÃO PARA BUSCAR OS DETALHES DO PET
   const fetchPetDetails = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`http://192.168.2.4:3000/pets/${id}`, {
+      const response = await api.get(`/pets/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Passa o token no cabeçalho
+          Authorization: `Bearer ${tokenState}`, // Passa o token no cabeçalho
         },
       });
       setPetData(response.data);
@@ -101,7 +101,7 @@ const PetDetails: React.FC = () => {
         <PetProfileHeader
           name={petData.name}
           location="Localização não disponível" // Substitua por um campo real se existir
-          image={{ uri: petData.photos && petData.photos.length > 0 ? `http://192.168.2.4:3000/uploads/${petData.photos[0]}` : 'https://via.placeholder.com/150' }}
+          image={{ uri: petData.photos && petData.photos.length > 0 ? api.getUri() + `/uploads/${petData.photos[0]}` : 'https://via.placeholder.com/150' }}
           onEditPress={handleEditPress}
         />
         <InfoSection

@@ -39,7 +39,7 @@ export default function Login() {
         const response = await login(data.email, data.password);
 
         if (response.success) {
-            router.replace('/(tabs)/Index');
+            router.replace('/(tabs)/ScMyPets');
         } else {
             setModalText(response.message);
             modalRef.current?.setVisible();

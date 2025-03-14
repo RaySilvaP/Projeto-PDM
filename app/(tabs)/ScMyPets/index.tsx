@@ -5,7 +5,8 @@ import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useFocusEffect } from 'expo-router'; 
-import axios from 'axios';
+import { api } from '@/api';
+import { useAuth } from '@/hooks/useAuth';
 
 // ESTRUTURA DO PET
 interface Pet {
@@ -25,21 +26,20 @@ function ScMyPets() {
   const [error, setError] = useState<string | null>(null);
   const primaryColor = useThemeColor({}, 'primary');
   const router = useRouter();
+  const {tokenState} = useAuth();
   
-  // TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxOTI0Mzk0LCJleHAiOjE3NDE5NjAzOTR9.T9uT_vxxxO-cfFTQS-qAjO_amaJawEuBjsCKybxXhYY'; // Token do usuário
-
   // CARREGA OS PETS DO BANCO USANDO A API
   const fetchPets = async () => {
     setLoading(true);
     setError(null);
     try {
       // MEU IP DA MINHA MÁQUINA, SÓ TROCAR PELO DE VOCÊS
-      const response = await axios.get('http://192.168.2.4:3000/pets', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.get('/pets', {
+          headers: {
+            Authorization: `Bearer ${tokenState}`,
+          },
+        }
+       );
 
       console.log('Resposta da API:', response.data);
       setPets(response.data);
@@ -74,8 +74,8 @@ function ScMyPets() {
           <Image
             source={{
               uri: item.photos && item.photos.length > 0
-                ? `http://192.168.2.4:3000/uploads/${item.photos[item.photos.length-1]}?${Date.now()}` // Adiciona timestamp para evitar cache
-                : 'https://www.example.com/placeholder.jpg', // Imagem de fallback
+                ? api.getUri() + `/uploads/${item.photos[item.photos.length-1]}?${Date.now()}` // Adiciona timestamp para evitar cache
+                : api.getUri() + '/placeholder.jpg', // Imagem de fallback
             }}
             style={styles.petImage}
           />
