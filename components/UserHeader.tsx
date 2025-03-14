@@ -4,17 +4,18 @@ import { View, Text, Image, StyleSheet, ImageSourcePropType } from 'react-native
 interface UserHeaderProps {
   name: string;
   subtitle: string;
-  avatarUrl?: string; 
-  avatarImage?: ImageSourcePropType; 
+  avatarUrl?: string;
+  avatarImage?: ImageSourcePropType;
 }
 
 const UserHeader: React.FC<UserHeaderProps> = ({ name, subtitle, avatarUrl, avatarImage }) => {
   return (
     <View style={styles.container}>
-      {avatarImage ? (
-        <Image source={avatarImage} style={styles.avatar} />
-      ) : (
-        <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+      {(avatarImage || avatarUrl) && (
+        <Image
+          source={avatarImage ? avatarImage : { uri: avatarUrl }}
+          style={styles.avatar}
+        />
       )}
       <View style={styles.textContainer}>
         <Text style={styles.welcomeText}>

@@ -27,16 +27,15 @@ export default function TabLayout() {
           default: {},
         }),
       }}>
-      // TAB HOME 
+              // TAB HOME 
       <Tabs.Screen
-        name="Home"
+        name="Index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
-
-      // TAB EXPLORE 
+              // TAB EXPLORE 
       <Tabs.Screen
         name="explore"
         options={{
@@ -44,6 +43,9 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
+
+
+
 
       // TAB PERFIL 
       <Tabs.Screen
@@ -76,6 +78,13 @@ export default function TabLayout() {
           href: null, // Remove esta tela da tab bar
         }}
       />
+            <Tabs.Screen
+        name="PetDetails"
+        options={{
+          href: null, // Remove esta tela da tab bar
+        }}
+      />
     </Tabs>
+  
   );
 }
