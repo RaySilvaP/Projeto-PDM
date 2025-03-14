@@ -6,19 +6,26 @@ import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import * as Location from 'expo-location';
+import { useAuth } from '@/hooks/useAuth';
+import { Address } from '@/context/AuthProvider';
+import { setStatusBarStyle } from 'expo-status-bar';
 
 const schema = yup.object().shape({
-    name: yup.string().required("Nome é obrigatório"),
-    cep: yup.string()
-        .matches(/^\d{5}-?\d{3}$/, "CEP inválido")
-        .required("CEP é obrigatório"),
+    userName: yup.string()
+        .min(4, 'O nome de usuário deve ter pelo menos 4 caracteres')
+        .required("Nome de usuário é obrigatório"),
     address: yup.string().required("Endereço é obrigatório"),
+    city: yup.string().required("Cidade é obrigatória"),
+    state: yup.string().required("Estado é obrigatório"),
+    email: yup.string().email('E-mail inválido').required('O e-mail é obrigatório'),
+    password: yup.string().min(6, 'A senha deve ter pelo menos 6 caracteres').required('A senha é obrigatória'),
 });
 
 export default function SignUp() {
@@ -28,16 +35,82 @@ export default function SignUp() {
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
+    const [loadingLocation, setLoadingLocation] = useState(false);
+    const { signup } = useAuth();
+    const [addressState, setAddressState] = useState("Usar Localização Atual")
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
 
-    const onSubmit = (data: any) => {
-        router.push({pathname: '/authentication/signup2', params: data});
+    const onSubmit = async (data: any) => {
+        const address = JSON.parse(data.address);
+        address.city = city;
+        address.state = state;
+        const response = await signup(data.userName, data.email, data.password, address);
+
+        if (response.success) {
+            Alert.alert("Sucesso", response.message);
+            router.replace('/authentication/login');
+        } else {
+            Alert.alert("Erro", response.message);
+        }
     };
 
     useEffect(() => {
-        register('name');
-        register('cep');
+        register('userName');
+        register('email');
+        register('password');
         register('address');
+        register('city');
+        register('state');
     }, [register]);
+
+    useEffect(() => {
+        if (errors.address) {
+            Alert.alert('Erro no endereço', errors.address.message);
+        }
+    }, [errors.address]);
+
+
+    useEffect(() => {
+        getLocation();
+    }, []);
+
+    const getLocation = async () => {
+        setLoadingLocation(true);
+        try {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permissão negada', 'Ative a localização para preencher o endereço automaticamente.');
+                setLoadingLocation(false);
+                return;
+            }
+
+            const location = await Location.getCurrentPositionAsync({});
+            const { latitude, longitude } = location.coords;
+
+            // Reverse Geocoding: Get address from latitude and longitude
+            const addressResponse = await Location.reverseGeocodeAsync({ latitude, longitude });
+
+            if (addressResponse.length > 0) {
+                setCity(addressResponse[0].city || '');
+                setState(addressResponse[0].region || '');
+
+                setValue('city', city);
+                setValue('state', state);
+
+                const data = { city, state, location: { type: 'Point', coordinates: [longitude, latitude] } };
+                const address = JSON.stringify(data);
+                setValue('address', address);
+                setAddressState("Usando localização atual");
+            } else {
+                Alert.alert('Erro', 'Não foi possível encontrar seu endereço.');
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Erro', 'Falha ao obter a localização.');
+        }
+        setLoadingLocation(false);
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -51,27 +124,52 @@ export default function SignUp() {
                 </ThemedText>
                 <View style={styles.inputs}>
                     <ThemedTextInput
-                        errorMessage={errors.name?.message}
-                        ref={(ref) => ref?.showErrorMessage(errors.name ? true : false)}
-                        onChangeText={text => setValue('name', text)}
-                        label='Nome Completo:'
-                        placeholder='Digite seu nome completo'
+                        errorMessage={errors.userName?.message}
+                        ref={ref => ref?.showErrorMessage(errors.userName ? true : false)}
+                        onChangeText={text => setValue('userName', text)}
+                        label='Nome de usuário:'
+                        placeholder='Digite seu nome de usuário'
                         style={{ marginBottom: 16 }} />
                     <ThemedTextInput
-                        errorMessage={errors.cep?.message}
-                        ref={(ref) => ref?.showErrorMessage(errors.cep ? true : false)}
-                        onChangeText={text => setValue('cep', text)}
-                        label='CEP:'
-                        placeholder='Digite seu CEP'
+                        label='E-mail:'
+                        placeholder='Digite seu endereço de e-mail'
+                        onChangeText={(text) => setValue('email', text)}
+                        errorMessage={errors.email?.message}
+                        ref={(ref) => ref?.showErrorMessage(errors.email ? true : false)}
                         style={{ marginBottom: 16 }} />
                     <ThemedTextInput
-                        errorMessage={errors.address?.message}
-                        ref={(ref) => ref?.showErrorMessage(errors.address ? true : false)}
-                        onChangeText={text => setValue('address', text)}
-                        label='Endereço:'
-                        placeholder='Digite sua endereço' />
-                    <ThemedButton type='transparent' style={styles.location} onPress={() => { }}>
-                        <ThemedText style={{ fontSize: 14 }}>Localizar</ThemedText>
+                        label='Senha:'
+                        placeholder='Digite sua senha'
+                        secureTextEntry
+                        onChangeText={(text) => setValue('password', text)}
+                        errorMessage={errors.password?.message}
+                        ref={(ref) => ref?.showErrorMessage(errors.password ? true : false)}
+                        style={{ marginBottom: 16 }} />
+                    <ThemedTextInput
+                        label='Cidade:'
+                        placeholder='Digite sua cidade'
+                        value={city}
+                        onChangeText={(text) => {
+                            setValue('city', text)
+                            setCity(text)
+                        }}
+                        errorMessage={errors.city?.message}
+                        ref={(ref) => ref?.showErrorMessage(errors.city ? true : false)}
+                        style={{ marginBottom: 16 }}
+                    />
+                    <ThemedTextInput
+                        label='Estado:'
+                        placeholder='Digite seu estado'
+                        value={state}
+                        onChangeText={(text) => {
+                            setValue('state', text)
+                            setState(text)
+                        }}
+                        errorMessage={errors.state?.message}
+                        ref={(ref) => ref?.showErrorMessage(errors.state ? true : false)}
+                    />
+                    <ThemedButton type='transparent' style={styles.location} onPress={getLocation} disabled={loadingLocation}>
+                        <ThemedText style={{ fontSize: 14 }}>{loadingLocation ? 'Buscando localização...' : addressState}</ThemedText>
                         <IconSymbol size={25} name='location' color={primaryColor} />
                     </ThemedButton>
                 </View>

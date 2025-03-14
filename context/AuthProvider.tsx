@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api } from '@/api';
 
-import { api } from '../api';
 
 export type Address = {
     city: string,
@@ -16,8 +16,8 @@ export type Address = {
 interface IContexto {
     tokenState: string | null;
     email: string | null;
-    register: (username: string, email: string, password: string, location: Address) => Promise<void>;
-    login: (email: string, password: string) => Promise<void>;
+    signup: (username: string, email: string, password: string, location: Address) => Promise<{ success: boolean; message: string }>;
+    login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
     logout: () => Promise<void>;
 }
 
@@ -32,10 +32,11 @@ export function AuthProviderContext({ children }: IProps) {
     const [email, setEmail] = useState<string | null>(null);
 
 
-    async function login(username: string, password: string) {
+    async function login(email: string, password: string): Promise<{ success: boolean; message: string }> {
         const data = {
-            username, password
+            email, password
         }
+        console.log(JSON.stringify(data));
         try {
             const response = await api.post('/login', data);
 
@@ -48,16 +49,20 @@ export function AuthProviderContext({ children }: IProps) {
             setTokenState(token);
             setEmail(user.email)
 
-        } catch (error) {
-            console.log('error aqui', error);
+            return { success: true, message: "Login realizado com sucesso!" };
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.message || "Erro ao realizar login. Verifique suas credenciais.";
+            return { success: false, message: errorMessage };
         }
     }
-    async function register(username: string, email: string, password: string, location: Address) {
-        const data = { username, email, password, location}
+    async function signup(userName: string, email: string, password: string, address: Address): Promise<{ success: boolean; message: string }> {
+        const data = { userName, email, password, address }
         try {
             await api.post('/user', data);
-        } catch (error) {
-            console.log('Register error', error);
+            return { success: true, message: "Cadastro realizado com sucesso!" };
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.message || "Erro ao realizar cadastro.";
+            return { success: false, message: errorMessage };
         }
     }
 
@@ -83,7 +88,7 @@ export function AuthProviderContext({ children }: IProps) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ tokenState, email, register, login, logout }}>
+        <AuthContext.Provider value={{ tokenState, email, signup, login, logout }}>
             {children}
         </AuthContext.Provider>
     )
