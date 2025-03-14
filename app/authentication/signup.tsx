@@ -6,7 +6,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,6 +16,7 @@ import * as Location from 'expo-location';
 import { useAuth } from '@/hooks/useAuth';
 import { Address } from '@/context/AuthProvider';
 import { setStatusBarStyle } from 'expo-status-bar';
+import { AlertModal, AlertModalHandle } from '@/components/AlertModal';
 
 const schema = yup.object().shape({
     userName: yup.string()
@@ -40,6 +41,8 @@ export default function SignUp() {
     const [addressState, setAddressState] = useState("Usar Localização Atual")
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
+    const [modalText, setModalText] = useState('');
+    const modalRef = useRef<AlertModalHandle>(null);
 
     const onSubmit = async (data: any) => {
         const address = JSON.parse(data.address);
@@ -48,10 +51,10 @@ export default function SignUp() {
         const response = await signup(data.userName, data.email, data.password, address);
 
         if (response.success) {
-            Alert.alert("Sucesso", response.message);
             router.replace('/authentication/login');
         } else {
-            Alert.alert("Erro", response.message);
+            setModalText(response.message);
+            modalRef.current?.setVisible();
         }
     };
 
@@ -183,6 +186,7 @@ export default function SignUp() {
                     </ThemedText>
                 </View>
             </ThemedView>
+            <AlertModal type='fail' ref={modalRef} text={modalText}/>
         </SafeAreaView>
     )
 }

@@ -10,8 +10,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { AlertModal, AlertModalHandle } from '@/components/AlertModal';
+import { modifyConfigAsync } from 'expo/config';
 
 const schema = yup.object({
     email: yup.string().email('E-mail inválido').required('O e-mail é obrigatório'),
@@ -26,6 +28,8 @@ export default function Login() {
         resolver: yupResolver(schema),
     });
     const { login } = useAuth();
+    const [modalText, setModalText] = useState('Sucesso');
+    const modalRef = useRef<AlertModalHandle>(null);
 
     useEffect(() => {
         register('email')
@@ -36,10 +40,10 @@ export default function Login() {
         const response = await login(data.email, data.password);
 
         if (response.success) {
-            Alert.alert("Sucesso", response.message);
             router.replace('/(tabs)');
         } else {
-            Alert.alert("Erro", response.message);
+            setModalText(response.message);
+            modalRef.current?.setVisible();
         }
     };
 
@@ -79,7 +83,9 @@ export default function Login() {
                     </ThemedText>
                 </View>
             </ThemedView>
+            <AlertModal type='fail' ref={modalRef} text={modalText}/>
         </SafeAreaView>
+        
     )
 }
 
