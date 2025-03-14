@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons'; // Importe o ícone de mapa
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -26,13 +27,15 @@ export default function TabLayout() {
           default: {},
         }),
       }}>
+              // TAB HOME 
       <Tabs.Screen
-        name="index"
+        name="Index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
+              // TAB EXPLORE 
       <Tabs.Screen
         name="explore"
         options={{
@@ -40,13 +43,48 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
+
+
+
+
+      // TAB PERFIL 
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Perfil",
+          title: 'Perfil',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
+
+      // TAB PETS 
+      <Tabs.Screen
+        name="ScMyPets/index"
+        options={{
+          title: 'PETS',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name={"paw" as any} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="ScMaps/index"
+        options={{
+          title: 'MAPS',
+          tabBarIcon: ({ color }) => <MaterialIcons name="map" size={28} color={color} />, // Ícone de mapa
+        }}
+      />
+      // ScPetForms NÃO DEVE SER UMA TAB 
+      <Tabs.Screen
+        name="ScPetForms/index"
+        options={{
+          href: null, // Remove esta tela da tab bar
+        }}
+      />
+            <Tabs.Screen
+        name="PetDetails"
+        options={{
+          href: null, // Remove esta tela da tab bar
+        }}
+      />
     </Tabs>
+  
   );
 }
