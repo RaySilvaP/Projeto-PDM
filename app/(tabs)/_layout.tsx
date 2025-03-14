@@ -27,31 +27,6 @@ export default function TabLayout() {
           default: {},
         }),
       }}>
-              // TAB HOME 
-      <Tabs.Screen
-        name="Index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-       // TAB EXPLORE 
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-      // TAB PERFIL 
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Perfil',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
-        }}
-      />
-
       // TAB PETS 
       <Tabs.Screen
         name="ScMyPets/index"
@@ -80,20 +55,6 @@ export default function TabLayout() {
           href: null, // Remove esta tela da tab bar
         }}
         />
-      <Tabs.Screen
-        name="addVacina"
-        options={{
-          title: "Adicionar Vacina",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="editarPerfil"
-        options={{
-          title: "Editar Perfil",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
-        }}
-      />
     </Tabs>
   
   );

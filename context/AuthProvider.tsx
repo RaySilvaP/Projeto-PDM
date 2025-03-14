@@ -61,6 +61,7 @@ export function AuthProviderContext({ children }: IProps) {
             await api.post('/user', data);
             return { success: true, message: "Cadastro realizado com sucesso!" };
         } catch (error: any) {
+            console.log(error);
             const errorMessage = error.response?.data?.message || "Erro ao realizar cadastro.";
             return { success: false, message: errorMessage };
         }

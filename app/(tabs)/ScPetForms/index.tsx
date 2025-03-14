@@ -9,6 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
+import { api } from '@/api';
+import { useAuth } from '@/hooks/useAuth';
 
 // ESTRUTURA DO PET
 interface Pet {
@@ -37,9 +39,7 @@ export default function ScPetForms() {
   const [tempImage, setTempImage] = useState<string | null>(null); // Armazenamento temporário da imagem
   const [loading, setLoading] = useState(false); // Estado para carregamento
   const alertRef = useRef<any>(null);
-
-  // TOKEN - MUDAR PARA FORMA QUE FOI MOSTRADO EM SALA DE AULA
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjdkMDI2MjdiNGE5MDYzZGNkNGQ2NzNhIiwicm9sZSI6IlVzZXIifSwiaWF0IjoxNzQxOTI0Mzk0LCJleHAiOjE3NDE5NjAzOTR9.T9uT_vxxxO-cfFTQS-qAjO_amaJawEuBjsCKybxXhYY'; // Token do usuário
+  const {tokenState} = useAuth();
 
   // PARA LIMPAR OS CAMPOS QUANDO FOR ADICIONAR
   useEffect(() => {
@@ -64,9 +64,9 @@ export default function ScPetForms() {
   // BUSCANDO DADOS DO PET PELO ID NA API
   const fetchPetDetails = async (petId: string) => {
     try {
-      const response = await axios.get(`http://192.168.2.4:3000/pets/${petId}`, {
+      const response = await api.get(`/pets/${petId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokenState}`,
         },
       });
 
@@ -146,10 +146,10 @@ export default function ScPetForms() {
     } as any);
 
     try {
-      const response = await axios.post(`http://192.168.2.4:3000/pets/${id || 'new'}/pictures`, formData, {
+      const response = await api.post(`/pets/${id || 'new'}/pictures`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokenState}`,
         },
         timeout: 10000, // Define um timeout de 10 segundos para a requisição
       });
@@ -164,9 +164,9 @@ export default function ScPetForms() {
   // FUNÇÃO PARA EXCLUIR IMAGEM
   const deleteImage = async (file: string) => {
     try {
-      await axios.delete(`http://192.168.2.4:3000/pets/${id}/pictures/${file}`, {
+      await api.delete(`/pets/${id}/pictures/${file}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokenState}`,
         },
       });
 
@@ -218,17 +218,17 @@ export default function ScPetForms() {
 
     try {
       if (id) {
-        const response = await axios.put(`http://192.168.2.4:3000/pets/${id}`, petData, {
+        const response = await api.put(`/pets/${id}`, petData, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${tokenState}`,
           },
         });
         console.log('Resposta da API (PUT):', response.data);
         alertRef.current?.setVisible('Pet atualizado com sucesso!');
       } else {
-        const response = await axios.post('http://192.168.2.4:3000/pets', { pets: [petData] }, {
+        const response = await api.post('/pets', { pets: [petData] }, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${tokenState}`,
           },
         });
         console.log('Resposta da API (POST):', response.data);
@@ -283,7 +283,7 @@ export default function ScPetForms() {
               <View>
                 <Image
                   source={{
-                    uri: tempImage || `http://192.168.2.4:3000/uploads/${photos[photos.length-1]}?${Date.now()}`, // Adiciona timestamp para evitar cache
+                    uri: tempImage || api.getUri() + `/uploads/${photos[photos.length-1]}?${Date.now()}`, // Adiciona timestamp para evitar cache
                   }}
                   style={styles.image}
                   onError={(e) => {
