@@ -17,7 +17,6 @@ export default function RootLayout() {
     const [loaded] = useFonts({
         SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
-    const isFirstLaunch = useFirstLaunch();
 
     useEffect(() => {
         if (loaded) {
@@ -25,7 +24,7 @@ export default function RootLayout() {
         }
     }, [loaded]);
 
-    if (!loaded || !isFirstLaunch === null) {
+    if (!loaded) {
         return null;
     }
 
