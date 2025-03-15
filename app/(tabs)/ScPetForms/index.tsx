@@ -7,10 +7,8 @@ import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
-import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import { api } from '@/api';
-import { useAuth } from '@/hooks/useAuth';
 
 // ESTRUTURA DO PET
 interface Pet {
@@ -39,7 +37,6 @@ export default function ScPetForms() {
   const [tempImage, setTempImage] = useState<string | null>(null); // Armazenamento temporário da imagem
   const [loading, setLoading] = useState(false); // Estado para carregamento
   const alertRef = useRef<any>(null);
-  const {tokenState} = useAuth();
 
   // PARA LIMPAR OS CAMPOS QUANDO FOR ADICIONAR
   useEffect(() => {
@@ -64,11 +61,7 @@ export default function ScPetForms() {
   // BUSCANDO DADOS DO PET PELO ID NA API
   const fetchPetDetails = async (petId: string) => {
     try {
-      const response = await api.get(`/pets/${petId}`, {
-        headers: {
-          Authorization: `Bearer ${tokenState}`,
-        },
-      });
+      const response = await api.get(`/pets/${petId}`);
 
       const pet = response.data;
       setName(pet.name);
@@ -149,7 +142,6 @@ export default function ScPetForms() {
       const response = await api.post(`/pets/${id || 'new'}/pictures`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${tokenState}`,
         },
         timeout: 10000, // Define um timeout de 10 segundos para a requisição
       });
@@ -164,11 +156,7 @@ export default function ScPetForms() {
   // FUNÇÃO PARA EXCLUIR IMAGEM
   const deleteImage = async (file: string) => {
     try {
-      await api.delete(`/pets/${id}/pictures/${file}`, {
-        headers: {
-          Authorization: `Bearer ${tokenState}`,
-        },
-      });
+      await api.delete(`/pets/${id}/pictures/${file}`);
 
       // Atualiza o estado local removendo a imagem excluída
       setPhotos((prevPhotos) => prevPhotos.filter((photo) => photo !== file));
@@ -218,19 +206,11 @@ export default function ScPetForms() {
 
     try {
       if (id) {
-        const response = await api.put(`/pets/${id}`, petData, {
-          headers: {
-            Authorization: `Bearer ${tokenState}`,
-          },
-        });
+        const response = await api.put(`/pets/${id}`, petData);
         console.log('Resposta da API (PUT):', response.data);
         alertRef.current?.setVisible('Pet atualizado com sucesso!');
       } else {
-        const response = await api.post('/pets', { pets: [petData] }, {
-          headers: {
-            Authorization: `Bearer ${tokenState}`,
-          },
-        });
+        const response = await api.post('/pets', { pets: [petData] });
         console.log('Resposta da API (POST):', response.data);
         alertRef.current?.setVisible('Pet adicionado com sucesso!');
       }

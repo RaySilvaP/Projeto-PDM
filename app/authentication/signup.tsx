@@ -7,15 +7,13 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { FieldValues, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import * as Location from 'expo-location';
 import { useAuth } from '@/hooks/useAuth';
-import { Address } from '@/context/AuthProvider';
-import { setStatusBarStyle } from 'expo-status-bar';
 import { AlertModal, AlertModalHandle } from '@/components/AlertModal';
 
 const schema = yup.object().shape({
@@ -31,7 +29,7 @@ const schema = yup.object().shape({
 
 export default function SignUp() {
     const primaryColor = useThemeColor({}, 'primary');
-    const secondTextColor = useThemeColor({}, 'textSecondary');
+    const secondTextColor = useThemeColor({}, 'placeholder');
     const router = useRouter();
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
@@ -186,11 +184,10 @@ export default function SignUp() {
                     </ThemedText>
                 </View>
             </ThemedView>
-            <AlertModal type='fail' ref={modalRef} text={modalText}/>
+            <AlertModal type='fail' ref={modalRef} text={modalText} />
         </SafeAreaView>
     )
 }
-
 
 const styles = StyleSheet.create({
     safeArea: {

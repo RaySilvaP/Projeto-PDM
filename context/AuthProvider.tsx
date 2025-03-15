@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from '@/api';
+import { jwtDecode } from 'jwt-decode';
 
 
 export type Address = {
@@ -74,12 +75,25 @@ export function AuthProviderContext({ children }: IProps) {
         await AsyncStorage.removeItem('auth.email');
     }
 
+    function isTokenExpired(token: string | null): boolean {
+        if (!token) return true;
+
+        try {
+            const decoded: { exp: number } = jwtDecode(token);
+            const currentTime = Date.now() / 1000; // Convert to seconds
+            return decoded.exp < currentTime;
+        } catch (error) {
+            console.log("Invalid token:", error);
+            return true;
+        }
+    }
+
     useEffect(() => {
         async function loadStorage() {
             const tokenStorage = await AsyncStorage.getItem('auth.token');
             const nameStorage = await AsyncStorage.getItem('auth.email');
 
-            if (tokenStorage) {
+            if (tokenStorage && !isTokenExpired(tokenStorage)) {
                 api.defaults.headers.common.Authorization = `Bearer ${tokenStorage}`;
                 setTokenState(tokenStorage);
                 setEmail(nameStorage);
