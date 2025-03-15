@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons'; // Importe o ícone de mapa
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -26,27 +27,35 @@ export default function TabLayout() {
           default: {},
         }),
       }}>
+      // TAB PETS 
       <Tabs.Screen
-        name="index"
+        name="ScMyPets/index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'PETS',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name={"paw" as any} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="ScMaps/index"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'MAPS',
+          tabBarIcon: ({ color }) => <MaterialIcons name="map" size={28} color={color} />, // Ícone de mapa
+        }}
+      />
+      // ScPetForms NÃO DEVE SER UMA TAB 
+      <Tabs.Screen
+        name="ScPetForms/index"
+        options={{
+          href: null, // Remove esta tela da tab bar
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="PetDetails"
         options={{
-          title: "Perfil",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+          href: null, // Remove esta tela da tab bar
         }}
-      />
+        />
     </Tabs>
+  
   );
 }
